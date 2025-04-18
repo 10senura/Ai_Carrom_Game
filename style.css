@@ -1,0 +1,291 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(45deg, #2c3e50, #4a6572);
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+.game-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scoreboard {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 20px;
+    border-radius: 10px;
+    transform: rotateX(10deg);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.player {
+    text-align: center;
+}
+
+.player.active {
+    font-weight: bold;
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+.carrom-board {
+    width: 600px;
+    height: 600px;
+    background-color: #e2a450;
+    position: relative;
+    border: 15px solid #8B4513;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transform: rotateX(20deg);
+    transform-style: preserve-3d;
+    border-radius: 8px;
+    transition: transform 0.5s ease;
+}
+
+.corner-pocket {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: #111;
+    border-radius: 50%;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.3);
+}
+
+.corner-pocket:nth-child(1) { top: -25px; left: -25px; }
+.corner-pocket:nth-child(2) { top: -25px; right: -25px; }
+.corner-pocket:nth-child(3) { bottom: -25px; left: -25px; }
+.corner-pocket:nth-child(4) { bottom: -25px; right: -25px; }
+
+.carrom-piece {
+    position: absolute;
+    border-radius: 50%;
+    transform: translateZ(5px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.white-piece {
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+    border: 2px solid #ddd;
+}
+
+.black-piece {
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 30% 30%, #555, #111);
+    border: 2px solid #444;
+}
+
+.queen {
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 30% 30%, #ff5555, #cc0000);
+    border: 2px solid #aa0000;
+}
+
+.striker {
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle at 30% 30%, #88ddff, #2299cc);
+    border: 2px solid #1177aa;
+    cursor: grab;
+    z-index: 10;
+}
+
+.striker.active {
+    box-shadow: 0 0 15px rgba(255,255,255,0.8);
+}
+
+.striker-area {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    pointer-events: none;
+}
+
+.board-line {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+.center-circle {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.center-dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.direction-indicator {
+    position: absolute;
+    height: 2px;
+    background-color: #ffcc00;
+    transform-origin: 0 0;
+    display: none;
+    opacity: 0.8;
+    pointer-events: none;
+    box-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+}
+
+.power-meter {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 20px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    transform: rotateX(10deg);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.power-level {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(to top, #00cc44, #ffcc00, #ff4400);
+    height: 0%;
+    transition: height 0.1s ease;
+}
+
+.game-controls {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+    transform: rotateX(10deg);
+}
+
+button {
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+.game-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 10px;
+    font-size: 24px;
+    text-align: center;
+    display: none;
+    z-index: 100;
+}
+
+.triangle-marker {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 15px solid rgba(0, 0, 0, 0.5);
+}
+
+.top-marker { top: 50px; left: 50%; transform: translate(-50%, 0) rotate(180deg); }
+.bottom-marker { bottom: 50px; left: 50%; transform: translate(-50%, 0); }
+.left-marker { left: 50px; top: 50%; transform: translate(0, -50%) rotate(90deg); }
+.right-marker { right: 50px; top: 50%; transform: translate(0, -50%) rotate(-90deg); }
+
+.rotation-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.rotation-button {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 20px;
+    user-select: none;
+}
+
+.rotation-button:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 700px) {
+    .carrom-board {
+        width: 90vw;
+        height: 90vw;
+        transform: rotateX(15deg);
+    }
+    
+    .scoreboard {
+        max-width: 90vw;
+        font-size: 14px;
+    }
+    
+    .white-piece, .black-piece, .queen {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .striker {
+        width: 35px;
+        height: 35px;
+    }
+}
