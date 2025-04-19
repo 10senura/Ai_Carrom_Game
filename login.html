@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrom Kings - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5e2c4;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #eed9b0, #d1b17b);
+            z-index: -1;
+        }
+        
+        /* Carrom board corners */
+        .corner {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #5a3921;
+            border-radius: 50%;
+        }
+        
+        .corner-1 {
+            top: 20px;
+            left: 20px;
+        }
+        
+        .corner-2 {
+            top: 20px;
+            right: 20px;
+        }
+        
+        .corner-3 {
+            bottom: 20px;
+            left: 20px;
+        }
+        
+        .corner-4 {
+            bottom: 20px;
+            right: 20px;
+        }
+        
+        /* Carrom coins animations */
+        .coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        .black-coin {
+            background-color: #222;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .white-coin {
+            background-color: #f5f5f5;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .red-coin {
+            background-color: #cc2222;
+            box-shadow: 0 0 15px rgba(204, 34, 34, 0.7);
+        }
+        
+        .striker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5f5f5, #ccc);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-20px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(0) rotate(180deg);
+            }
+            75% {
+                transform: translateY(20px) rotate(270deg);
+            }
+        }
+        
+        /* Main container */
+        .container {
+            width: 400px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            animation: containerAppear 1s ease-out forwards;
+        }
+        
+        @keyframes containerAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 150px;
+            height: 150px;
+            background-color: #5a3921;
+            opacity: 0.1;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .container::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            width: 180px;
+            height: 180px;
+            background-color: #cc2222;
+            opacity: 0.1;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        /* Game logo */
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .logo h1 {
+            color: #5a3921;
+            font-size: 32px;
+            margin-bottom: 5px;
+            position: relative;
+            display: inline-block;
+            animation: logoAnimation 2s infinite alternate;
+        }
+        
+        @keyframes logoAnimation {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .logo h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, #5a3921, #cc2222, #5a3921);
+        }
+        
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Form tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            cursor: pointer;
+            color: #666;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab.active {
+            color: #5a3921;
+            border-bottom: 3px solid #5a3921;
+        }
+        
+        .tab::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(90, 57, 33, 0.1);
+            top: 0;
+            left: -100%;
+            transition: all 0.3s ease;
+        }
+        
+        .tab:hover::before {
+            left: 0;
+        }
+        
+        /* Forms container */
+        .form-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        form {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: all 0.5s ease;
+        }
+        
+        .login-form {
+            left: 0;
+        }
+        
+        .register-form {
+            left: 100%;
+        }
+        
+        .form-container.show-register .login-form {
+            left: -100%;
+        }
+        
+        .form-container.show-register .register-form {
+            left: 0;
+        }
+        
+        /* Form inputs */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #5a3921;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        
+        .input-group input:focus {
+            border-color: #5a3921;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(90, 57, 33, 0.2);
+            background-color: #fff;
+        }
+        
+        /* Submit button */
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #5a3921, #8c6342);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(90, 57, 33, 0.5);
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            top: -50px;
+            left: -50px;
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+        
+        button:active::after {
+            transform: scale(5);
+            opacity: 0;
+            transition: 0s;
+        }
+        
+        /* Forgot password link */
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        
+        .forgot-password a {
+            color: #5a3921;
+            text-decoration: none;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .forgot-password a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: #5a3921;
+            transition: width 0.3s ease;
+        }
+        
+        .forgot-password a:hover::after {
+            width: 100%;
+        }
+        
+        /* Message styles */
+        .message {
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+            animation: messageAppear 0.3s ease forwards;
+        }
+        
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #2e7031;
+        }
+        
+        .error {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #c62828;
+        }
+        
+        /* Board lines animations */
+        .board-line {
+            position: absolute;
+            background-color: #5a3921;
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .horizontal-line {
+            height: 2px;
+            width: 100%;
+            animation: horizontalLineMove 15s infinite linear;
+        }
+        
+        .vertical-line {
+            width: 2px;
+            height: 100%;
+            animation: verticalLineMove 15s infinite linear;
+        }
+        
+        @keyframes horizontalLineMove {
+            0% {
+                top: 0%;
+            }
+            100% {
+                top: 100%;
+            }
+        }
+        
+        @keyframes verticalLineMove {
+            0% {
+                left: 0%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background elements -->
+    <div class="background"></div>
+    
+    <!-- Carrom board corners -->
+    <div class="corner corner-1"></div>
+    <div class="corner corner-2"></div>
+    <div class="corner corner-3"></div>
+    <div class="corner corner-4"></div>
+    
+    <!-- Board lines -->
+    <div class="board-line horizontal-line"></div>
+    <div class="board-line vertical-line"></div>
+    
+    <!-- Floating coins -->
+    <div class="coin black-coin" style="top: 15%; left: 25%; animation-delay: 0s;"></div>
+    <div class="coin white-coin" style="top: 20%; left: 80%; animation-delay: 0.5s;"></div>
+    <div class="coin black-coin" style="top: 70%; left: 15%; animation-delay: 1s;"></div>
+    <div class="coin white-coin" style="top: 65%; left: 85%; animation-delay: 1.5s;"></div>
+    <div class="coin black-coin" style="top: 35%; left: 10%; animation-delay: 2s;"></div>
+    <div class="coin white-coin" style="top: 25%; left: 90%; animation-delay: 2.5s;"></div>
+    <div class="coin red-coin" style="top: 50%; left: 5%; animation-delay: 3s;"></div>
+    <div class="striker" style="bottom: 10%; left: 50%; transform: translateX(-50%); animation: float 8s infinite ease-in-out;"></div>
+    
+    <!-- Main container -->
+    <div class="container">
+        <div class="logo">
+            <h1>Carrom Kings</h1>
+            <p>Master the board, become the champion!</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" id="login-tab">Login</div>
+            <div class="tab" id="register-tab">Register</div>
+        </div>
+        
+        <div class="form-container">
+            <form class="login-form" id="loginForm">
+                <div class="input-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" placeholder="Enter your username" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+                
+                <button type="submit">Play Now</button>
+                <div class="message" id="login-message"></div>
+            </form>
+            
+            <form class="register-form" id="registerForm">
+                <div class="input-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" placeholder="Choose a username" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="Create a password" required>
+                </div>
+                
+                <button type="submit">Join the Game</button>
+                <div class="message" id="register-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+        const formContainer = document.querySelector('.form-container');
+        
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            formContainer.classList.remove('show-register');
+        });
+        
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            formContainer.classList.add('show-register');
+        });
+        
+        // Form submission handling
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginMessage = document.getElementById('login-message');
+        const registerMessage = document.getElementById('register-message');
+        
+        // Simulated user database
+        const users = [];
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Add loading animation to button
+            const button = loginForm.querySelector('button');
+            button.innerHTML = 'Logging in...';
+            button.disabled = true;
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // Check if user exists
+                const user = users.find(u => (u.username === username || u.email === username) && u.password === password);
+                
+                if (user) {
+                    showMessage(loginMessage, 'Login successful! Starting game...', 'success');
+                    
+                    // Add some animation before redirect
+                    document.querySelectorAll('.coin').forEach(coin => {
+                        coin.style.animationDuration = '1s';
+                    });
+                    
+                    // Simulate redirect after login
+                    setTimeout(() => {
+                        alert('Welcome to Carrom Kings Game! This would redirect to the game.');
+                        button.innerHTML = 'Play Now';
+                        button.disabled = false;
+                    }, 1500);
+                } else {
+                    showMessage(loginMessage, 'Invalid username or password', 'error');
+                    button.innerHTML = 'Play Now';
+                    button.disabled = false;
+                }
+            }, 1000);
+        });
+        
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('register-username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            
+            // Add loading animation to button
+            const button = registerForm.querySelector('button');
+            button.innerHTML = 'Creating account...';
+            button.disabled = true;
+            
+            // Check if username or email already exists
+            if (users.some(u => u.username === username)) {
+                showMessage(registerMessage, 'Username already taken', 'error');
+                button.innerHTML = 'Join the Game';
+                button.disabled = false;
+                return;
+            }
+            
+            if (users.some(u => u.email === email)) {
+                showMessage(registerMessage, 'Email already registered', 'error');
+                button.innerHTML = 'Join the Game';
+                button.disabled = false;
+                return;
+            }
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // Add user to our simulated database
+                users.push({ username, email, password });
+                
+                showMessage(registerMessage, 'Registration successful! You can now log in.', 'success');
+                
+                // Clear form
+                document.getElementById('register-username').value = '';
+                document.getElementById('register-email').value = '';
+                document.getElementById('register-password').value = '';
+                
+                button.innerHTML = 'Join the Game';
+                button.disabled = false;
+                
+                // Switch to login tab after successful registration
+                setTimeout(() => {
+                    loginTab.click();
+                }, 1500);
+            }, 1000);
+        });
+        
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = 'message ' + type;
+            element.style.display = 'block';
+            
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Dynamic animation for coins
+        document.querySelectorAll('.coin').forEach(coin => {
+            // Randomize starting position slightly
+            const currentTop = parseFloat(coin.style.top);
+            const currentLeft = parseFloat(coin.style.left);
+            
+            coin.style.top = `${currentTop + (Math.random() * 10 - 5)}%`;
+            coin.style.left = `${currentLeft + (Math.random() * 10 - 5)}%`;
+            
+            // Add slight random rotation
+            coin.style.transform = `rotate(${Math.random() * 360}deg)`;
+        });
+        
+        // Create additional coins on load for more animation
+        function createCoins() {
+            const colors = ['black-coin', 'white-coin', 'black-coin', 'white-coin'];
+            const container = document.body;
+            
+            for (let i = 0; i < 5; i++) {
+                const coin = document.createElement('div');
+                coin.className = `coin ${colors[i % colors.length]}`;
+                coin.style.top = `${Math.random() * 90 + 5}%`;
+                coin.style.left = `${Math.random() * 90 + 5}%`;
+                coin.style.animationDelay = `${Math.random() * 5}s`;
+                coin.style.animationDuration = `${5 + Math.random() * 5}s`;
+                container.appendChild(coin);
+            }
+        }
+        
+        createCoins();
+    </script>
+</body>
+</html>
